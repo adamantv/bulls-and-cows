@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/header.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/index.css}">
+    <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
+    <title>Быки и коровы - Играть</title>
+</head>
+<body>
+
+<div th:replace="header :: header"></div>
+
+<table>
+
+    <tr>
+        <td class="tab1">
+            <p class="inputNumberLabel">Введите число:</p>
+            <div class="screen">
+                <div class="pin" id="pin1">x</div><div class="pin" id="pin2">x</div><div class="pin" id="pin3">x</div><div class="pin" id="pin4">x</div>
+            </div>
+            <div id="inputPanel">
+                <div class="top">
+                    <span class="clear" onclick="removeNumber()">C</span>
+                </div>
+                <div class="numberButtons">
+                    <span id="number1" onclick="inputNumber(1)">1</span>
+                    <span id="number2" onclick="inputNumber(2)">2</span>
+                    <span id="number3" onclick="inputNumber(3)">3</span>
+                    <span id="number4" onclick="inputNumber(4)">4</span>
+                    <span id="number5" onclick="inputNumber(5)">5</span>
+                    <span id="number6" onclick="inputNumber(6)">6</span>
+                    <span id="number7" onclick="inputNumber(7)">7</span>
+                    <span id="number8" onclick="inputNumber(8)">8</span>
+                    <span id="number9" onclick="inputNumber(9)">9</span>
+                    <span id="number0" onclick="inputNumber(0)">0</span>
+                </div>
+                <div class="bottom">
+                    <span id="sendButton" onclick ="makeAttempt()">Сделать ход</span>
+                </div>
+            </div>
+        </td>
+
+        <td class="tab2">
+
+            <div class="numberOfMovesBlock">
+                <p>Компьютер уже что-то задумал. Играем!</p>
+                <p>Ходов: </p>
+                <p id="attemptsLabel">0</p>
+                <div class="gameResults"></div>
+            </div>
+
+        </td>
+
+        <td class="tab3">
+
+            <div class="aboutBlock">
+                <h1>Правила игры</h1>
+                <p> Быки и коровы - логическая игра, в которой необходимо отгадать 4-х значное число,
+                    загаданное компьютером, используя подсказки.</p>
+                <p> В ответ на каждый Ваш ход с возможным вариантом числа, компьютер показывает подсказки - количество отгаданных
+                    цифр, стоящих НА СВОИХ МЕСТАХ ("быки") и количество отгаданных цифр, стоящих НЕ НА СВОИХ МЕСТАХ ("коровы"). </p>
+                <p> Возможные варианты вводятся один за другим, пока число не будет угадано целиком. Загаданное компьютером
+                    число обязательно состоит из неповторяющихся (разных) цифр.</p></div><br>
+            <h2>Пример</h2>
+            <p> Компьютер задумал 0834.</p>
+            <p> Игрок сделал ход 8134</p>
+            <p> Компьютер ответил: 2 быка (цифры 3 и 4) и 1 корова (цифра 8).</p>
+            </div>
+
+
+        </td>
+
+    </tr>
+</table>
+
+<script th:inline="javascript">
+    /** Цифры, введённые пользователем */
+    var numbers = [];
+    /** Количество совершенных попыток */
+    var attempts = 0;
+    /** Закончена ли игра */
+    var isGameFinished = false;
+
+    /** Предупреждение о выходе из игры */
+    $(window).bind('beforeunload', function(){
+        if (attempts > 0 && !isGameFinished) return 'Вы действительно хотите покинуть игру?';
+    });
+
+    /**
+     * Нажатие на цифру. Если введено меньше 4 цифр, нажатая цифра блокируется и
+     * добавляется к числу пользователя. Если введены все 4 цифры, кнопку отправки становится доступной
+     * для нажатия
+     */
+    function inputNumber(x) {
+
+        if (numbers.length < 4) {
+            numbers.push(x);
+            $("#pin" + numbers.length).text(x);
+            $("#number" + x).css("pointer-events", "none").fadeTo("fast", 0.2);
+        }
+
+        if (numbers.length === 4) {
+            $("#sendButton").css("pointer-events", "auto").fadeTo("fast", 1.0);
+        }
+    }
+
+    /**
+     * Нажатие на кнопку С (стереть). Если введена хотя-бы одна цифра, удаляется
+     * последняя цифра из числа, ее кнопка становится доступной для нажатия.
+     */
+    function removeNumber() {
+        if (numbers.length > 0) {
+            $("#pin" + numbers.length).text("x");
+            $("#number" + numbers.pop()).css("pointer-events", "auto").fadeTo("fast", 1.0);
+            $("#sendButton").css("pointer-events", "none").fadeTo("fast", 0.5);
+        }
+    }
+
+    /**
+     * Отправка хода игрока. Ход отображается на странице игры. Если число угадано, игра завершается
+     */
+    function makeAttempt() {
+        $.ajax({
+            url: location.href + "makeAttempt",
+            data: {"numbers[]": numbers},
+            success: function(response) {
+                attempts++;
+                $('#attemptsLabel').text(attempts);
+                $('.gameResults').prepend('<p>' +
+                    numbers[0] + numbers[1] + numbers[2] + numbers[3] + ' - ' +
+                    response.first + 'Б' + response.second + 'К</p>');
+                removeNumber();
+                removeNumber();
+                removeNumber();
+                removeNumber();
+                if (response.first === 4) congratulation();
+            },
+            error: function() {
+                alert('Произошла непредвиденная ошибка');
+            }
+        });
+    }
+
+    /**
+     * Завершение игры
+     */
+    function congratulation() {
+        isGameFinished = true;
+        alert('Вы угадали число! Количество попыток: ' + attempts + '.');
+        window.location.href = confirm('Начать новую игру?') ? "/" : "/rating";
+    }
+
+</script>
+
+</body>
+</html>

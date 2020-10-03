@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/header.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/profile.css}">
+    <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
+    <title>Профиль</title>
+</head>
+<body>
+
+<div th:replace="header :: header"></div>
+
+<div class="gameResults">
+    <p style = "text-align: center">Личный рейтинг
+    <p th:href="@{/profile}"><p style = "text-align: center" sec:authentication="name"></p></p>
+    </p><br>
+    <p id="stats"></p><br>
+    <p>История игр:</p><br>
+    <table id="gameResultsTable">
+        <tr>
+            <th>№</th>
+            <th>Дата игры</th>
+            <th>Кол-во ходов</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    /**
+     * Получение статистики и истории игр пользователя
+     */
+    $(function () {
+        $.getJSON(location.href + '/stats', function (data) {
+            if (data.gamesPlayed === 0) {
+                $('#stats').append('Завершено игр: 0' +
+                    '<br>Минимальное количество ходов: —' +
+                    '<br>Среднее количество ходов: —');
+            } else {
+                $('#stats').append('Завершено игр: ' + data.gamesPlayed +
+                    '<br>Минимальное количество ходов: ' + data.bestAttempts +
+                    '<br>Среднее количество ходов: ' + Math.round(data.averageAttempts * 10) / 10);
+            }
+        });
+
+        $.getJSON(location.href + '/gameResults', function (data) {
+            $.each(data, function (key, game) {
+                $('#gameResultsTable').append('<tr><td>' +
+                    (key + 1) + '</td><td>' +
+                    game.date + '</td><td>' +
+                    game.attempts + '</td></tr>');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

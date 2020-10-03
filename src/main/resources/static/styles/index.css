@@ -1,0 +1,140 @@
+.tab1, .tab2, .tab3 {
+    padding: 15px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tab1 {
+    text-align: center;
+    width: 20%;
+}
+
+.tab2 {
+    width: 30%;
+}
+
+.tab3 {
+    width: 50%;
+}
+
+.top .screen {
+    height: 80px;
+    width: 100%;
+    position:absolute;
+    top:0; left:0;
+    font-weight:normal;
+    line-height: 40px;
+    color: white;
+    background: white;
+}
+
+.pin {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 1px mediumslateblue;
+    padding: 5px;
+    background: mediumslateblue;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.inputNumberLabel {
+    margin-top: 0px;
+    margin-left: 2px;
+    margin-right: auto;
+}
+
+#inputPanel {
+    width: 260px;
+    height: auto;
+    overflow:hidden;
+    margin-top: 0px;
+    margin-right: auto;
+    padding: 0px 20px 0px;
+    position:relative;
+    border-radius: 3px;
+}
+
+.top span.clear {
+    position:absolute;
+    z-index:6;
+}
+
+.numberButtons, .top {
+    overflow: hidden;
+}
+
+.numberButtons span, .top span.clear, .bottom span {
+    float: left;
+    position: relative;
+    top: 0;
+    cursor: pointer;
+    width: 66px;
+    height: 56px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 3px;
+    box-shadow: 0px 4px rgba(0, 0, 0, 0.2);
+    margin: 0 7px 11px 0;
+    color: #ccc;
+    line-height: 56px;
+    text-align: center;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.bottom span {
+    width: 212px;
+}
+
+.top span.clear {
+    background: transparent;
+    box-shadow: none;
+    color: #aaa;
+    width:56px;
+    left:5px
+}
+
+.numberButtons span:hover, .bottom span:hover {
+    background: rgba(255,255,255,0.8);
+    color: #333;
+}
+
+.top span.clear:hover {
+    border-radius:190px;
+    background: rgba(0,0,0,0.1);
+    color: white;
+}
+
+.numberButtons span:active, .bottom span:active {
+    box-shadow: 0px 0px rgba(0, 0, 0, 0.2);
+    top: 4px;
+}
+
+.top span.clear:active {
+    top: 4px;
+    box-shadow: 0px 0px #d3545d;
+}
+
+.gameResults {
+    text-transform: none;
+}
+
+h1, h2 {
+    border: 1px mediumslateblue;
+    padding: 5px;
+    background: mediumslateblue;
+    color: black;
+}
+
+h1 {
+    width: 145px;
+}
+
+h2 {
+    width: 85px;
+}
+
+
+

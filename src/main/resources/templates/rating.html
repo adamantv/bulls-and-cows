@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/header.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{styles/rating.css}">
+    <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
+    <title>Рейтинг</title>
+</head>
+<body>
+
+<div th:replace="header :: header"></div>
+
+<div class="bestPlayers">
+    <p>Таблица лидеров рейтинга</p>
+    <br>
+    <table id="bestPlayersTable" >
+        <tr>
+            <th>Место</th>
+            <th>Игрок</th>
+            <th>Завершено игр</th>
+            <th>Минимальное кол-во ходов</th>
+            <th>Среднее кол-во ходов</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    /**
+     * Расчет рейтинга игроков
+     */
+    $(function(){
+        $.getJSON(location.href + '/topUsers', function(data) {
+            $.each(data, function(key, topUser) {
+                $('#bestPlayersTable').append('<tr><td>' +
+                    (key + 1) + '</td><td>' +
+                    topUser.username + '</td><td>' +
+                    topUser.gamesPlayed + '</td><td>' +
+                    topUser.bestAttempts + '</td><td>' +
+                    Math.round(topUser.averageAttempts * 10) / 10 + '</td></tr>')
+            });
+        });
+
+        $.getJSON(location.href + '/myTopPosition', function(data) {
+            if (data.first === -1) {
+                $('#myTopPosition').append('<tr><td>—</td>' +
+                    '<td>' + data.second.username + '</td>' +
+                    '<td>0</td>' +
+                    '<td>—</td>' +
+                    '<td>—</td></tr>')
+            } else {
+                $('#myTopPosition').append('<tr><td>' +
+                    data.first + '</td><td>' +
+                    data.second.username + '</td><td>' +
+                    data.second.gamesPlayed + '</td><td>' +
+                    data.second.bestAttempts + '</td><td>' +
+                    Math.round(data.second.averageAttempts) + '</td></tr>')
+
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
